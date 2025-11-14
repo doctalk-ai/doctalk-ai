@@ -1,0 +1,7 @@
+--start ollama server - from anywhere
+ollama serve
+
+--run uvicorn app from backend
+cd backend
+source venv/bin/activate  
+uvicorn main:app --reload --port 8000

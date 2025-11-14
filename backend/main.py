@@ -109,6 +109,70 @@ async def upload_pdf(file: UploadFile = File(...)):
         "message": "PDF successfully processed and stored in database!"
     }
 
+@app.post("/chat")
+async def chat_with_document(question: str, document_id: str):
+    print(f"💬 Chat question: {question}")
+    print(f"📄 Querying document: {document_id}")
+    
+    # 1. Embed the question
+    question_embedding = get_embedding(question)
+    print(f"🧠 Question embedded with {len(question_embedding)} dimensions")
+    
+    # 2. Find similar chunks using vector search
+    print("🔍 Searching for relevant chunks...")
+    response = supabase.rpc(
+        'match_chunks',
+        {
+            'query_embedding': question_embedding,
+            'match_count': 5,
+            'filter_document_id': document_id  # Changed from 'document_id'
+        }
+    ).execute()
+    
+    relevant_chunks = response.data
+    print(f"📚 Found {len(relevant_chunks)} relevant chunks")
+    
+    # 3. Build context from relevant chunks
+    context = "\n\n".join([chunk['chunk_text'] for chunk in relevant_chunks])
+    
+    # 4. Generate AI response
+    print("🤖 Generating AI response...")
+    answer = generate_answer(question, context)
+    if len(answer) > 0:
+        print(f" Answer received: {answer}")
+    else:
+        print(f" Error: couldn't get answer")
+
+
+
+    return {
+        "question": question,
+        "document_id": document_id,
+        "relevant_chunks_count": len(relevant_chunks),
+        "answer": answer
+    }
+
+def generate_answer(question: str, context: str) -> str:
+    """Generate answer using Ollama chat model"""
+    prompt = f"""Based on the following context, answer the user's question.
+
+Context:
+{context}
+
+Question: {question}
+
+Answer:"""
+    
+    payload = {
+        "model": "deepseek-r1:14b",
+        "prompt": prompt,
+        "stream": False
+    }
+    
+    response = requests.post(f"{OLLAMA_URL}/api/generate", json=payload)
+    response.raise_for_status()
+    return response.json()["response"]
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
