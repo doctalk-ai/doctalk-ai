@@ -83,6 +83,8 @@
 
 ## 🎯 Quick Start: Run in 5 Minutes
 
+## 🖥️ Backend Setup
+
 <h4>Prerequisites</h4>
 <ul>
   <li>Python 3.8+</li>
@@ -213,6 +215,32 @@ uvicorn main:app --reload --port 8000
     </ul>
   </li>
 </ul>
+
+## 🖥️ Frontend Setup
+
+<h4>Prerequisites</h4>
+<ul>
+  <li>Node.js 18+</li>
+  <li>npm or yarn</li>
+</ul>
+
+<h4>Setup Instructions</h4>
+
+```bash
+# 1. Navigate to frontend directory
+cd frontend
+
+# 2. Install dependencies
+npm install
+
+# 3. Start development server
+npm run dev
+
+#4. Run in browser
+The frontend will run on http://localhost:3000
+```
+
+<p>The frontend includes:</p> <ul> <li>✅ Next.js 16 with React 19</li> <li>✅ TypeScript for type safety</li> <li>✅ Tailwind CSS for styling</li> <li>✅ ESLint for code quality</li> </ul><p><strong>Note:</strong> The frontend is a minimal scaffold waiting for contributors to build features!</p>
 
 </div>
 
