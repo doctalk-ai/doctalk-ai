@@ -8,8 +8,6 @@ from supabase import create_client, Client  # <-- Make sure this is imported
 import google.generativeai as genai
 import os
 import io
-import time
-import asyncio
 import requests  
 import json     
 
@@ -38,27 +36,16 @@ def test_db():
 
 def get_embedding(text: str) -> list:
     """Get embedding vector using Google's embedding model"""
-    for attempt in range(3): # Retry up to 3 times on failure
-        try: 
-            result = genai.embed_content(
-                model="models/embedding-001",  # Example embedding model
-                content=text 
-                # No task_type needed - works for both documents and queries
-            )
-            return result['embedding']
-        except Exception as e:
-            error_msg = str(e)
-            if "429" in error_msg or "quota" in error_msg and attempt < 2:
-                wait_time = (attempt + 1) * 10
-                print(f"Rate limit exceeded, retrying... (attempt {attempt + 1})")
-                import time
-                time.sleep(wait_time)  # Exponential backoff
-            else:
-                print(f"Error getting embedding: {e}")
-                return [0.0] * 768 # Return a zero vector on failure
-        
-    print("Failed to get embedding after retries")
-    return [0.0] * 768 # Return a zero vector on failure
+    try:
+        result = genai.embed_content(
+            model="models/embedding-001",
+            content=text
+            # No task_type needed - works for both documents and queries
+        )
+        return result['embedding']
+    except Exception as e:
+        print(f"Error getting embedding: {e}")
+        return [0.0] * 768
 
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
@@ -87,7 +74,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     print(f"Extracted {len(file_text)} characters from TXT")   
     # 3. Chunk text with LangChain
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000, # chunk size can be change as needed based on use case and model limits
+        chunk_size=1000, # chunk size can be change as needed based on use case and model limits
         chunk_overlap=200 # overlap to maintain context between chunks 
     )
     chunks = text_splitter.split_text(file_text)
@@ -107,12 +94,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     print(" Generating embeddings and storing chunks...")
     stored_chunks = 0
     for i, chunk in enumerate(chunks):
-        if i > 0:
-            await asyncio.sleep(2)  # To avoid rate limits
         embedding = get_embedding(chunk)
-        if not any(embedding): # Check for zero vector indicating an error
-            print(f"  Skipping chunk {i+1} due to embedding error")
-            continue
         
         chunk_data = {
             "document_id": document_id,
@@ -121,11 +103,6 @@ async def upload_pdf(file: UploadFile = File(...)):
         }
         supabase.table("document_chunks").insert(chunk_data).execute()
         stored_chunks += 1
-
-        if embedding :
-            print(f" stored chunk {i+1}/{len(chunks)}")
-        else:
-            print(f" failed to store chunk {i+1}/{len(chunks)}")
         
         # print preview of first 2 chunks
         if i < 2:
@@ -139,7 +116,7 @@ async def upload_pdf(file: UploadFile = File(...)):
         "chunk_count": len(chunks),
         "document_id": document_id,
         "stored_chunks": stored_chunks,
-        "message": "PDF successfully processed and stored in database!"
+        "message": "File successfully processed and stored in database!"
     }
 
 @app.post("/chat")
