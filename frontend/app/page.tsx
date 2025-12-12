@@ -43,7 +43,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-6 py-3 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-colors"
                 >
-                  🛠️ Start Contributing
+                  🛠️ Start Contributing!!!!
                 </a>
               </div>
             </div>
