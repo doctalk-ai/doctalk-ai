@@ -5,31 +5,41 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pypdf import PdfReader
 import io
 import asyncio
+from backend.core.logging_config import setup_logging
+import logging
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/upload")
 async def upload(file: UploadFile = File(...)):
+    logger.info(f"Starting upload for file: {file.filename} ({file.content_type})")
     contents = await file.read()
-
-    # Extract text
-    if file.content_type == "application/pdf":
-        text = ""
-        reader = PdfReader(io.BytesIO(contents))
-        for page in reader.pages:
-            extracted = page.extract_text()
-            if extracted:
-                text += extracted + "\n"
-
-    elif file.content_type == "text/plain":
-        text = contents.decode("utf-8", errors="ignore")
-
-    else:
-        return {"error": "Unsupported file type"}
-
+    try:
+    # 2. Extract text with pypdf or plain text
+        if file.content_type == "application/pdf":
+            file_text = "" # Initialize empty string to hold text and avoid reference before assignment
+            reader = PdfReader(io.BytesIO(contents))
+            for page in reader.pages: 
+                file_text += page.extract_text() + "\n"
+                logging.info(f" Extracted {len(file_text)} characters of text")
+        elif file.content_type == "text/plain":
+            # Try UTF-8 first, if that fails, try Turkish Windows encoding
+            try:
+                file_text = contents.decode("utf-8")
+            except UnicodeDecodeError:
+                file_text = contents.decode("cp1254")  # Common for Turkish Windows files
+                logging.info(f" Extracted {len(file_text)} characters of text")
+        else:
+            logger.error(f"Unsupported file type uploaded.{file.content_type}")
+            return {"error": "Unsupported file type. Please upload a PDF or TXT file."}
+    except Exception as e:
+        logger.error(f"Error extracting text from file: {e}")
+        return {"error": f"Failed to extract text: {str(e)}"}
+    
     # Split text
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    chunks = splitter.split_text(text)
+    chunks = splitter.split_text(file_text)
 
     # Create document
     doc = supabase_client.table("documents").insert({"file_name": file.filename}).execute()
@@ -44,5 +54,7 @@ async def upload(file: UploadFile = File(...)):
             "chunk_text": chunk,
             "embedding": embedding
         }).execute()
+        logger.debug(f"Stored chunk {i + 1}/{len(chunks)} for document ID {doc_id}")
 
     return {"message": "Uploaded", "document_id": doc_id, "chunks": len(chunks)}
+    
