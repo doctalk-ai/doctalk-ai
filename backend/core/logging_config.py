@@ -47,7 +47,7 @@ def setup_logging():
     # Apply to root logger
     logging.basicConfig(level=log_level, handlers=[stream_handler, file_handler], force=True)
 
-    # Also wire uvicorn's loggers to use the same handlers
+    # Wire uvicorn loggers
     for name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
         lg = logging.getLogger(name)
         lg.handlers = [stream_handler, file_handler]

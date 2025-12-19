@@ -21,10 +21,9 @@ class Settings:
     SUPABASE_KEY: str = os.getenv("SUPABASE_KEY")
     GEN_AI_KEY: str = os.getenv("GEN_AI_KEY")
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO").upper()  # Log level with default
-    # Whether to use UTC timestamps for logs. Set LOG_USE_UTC=true in .env to enable UTC.
-    LOG_USE_UTC: bool = os.getenv("LOG_USE_UTC", "false").lower() in ("1", "true", "yes")
+    LOG_USE_UTC: bool = os.getenv("LOG_USE_UTC", "false").lower() in ("1", "true", "yes")# if env var is set to true-like value you can see it in utc
 
-    # Backwards-compatible lowercase properties (some modules referenced these)
+    # Backwards-compatible lowercase properties for accessing config values
     @property
     def supabase_url(self) -> str:
         return self.SUPABASE_URL
@@ -34,5 +33,5 @@ class Settings:
         return self.SUPABASE_KEY
 
 
-# Create a single config object that other files can import
+
 config = Settings()

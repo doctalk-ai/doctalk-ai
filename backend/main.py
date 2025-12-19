@@ -15,9 +15,9 @@ setup_logging()
 @app.get("/")
 def root():
     logger.info("Root endpoint accessed") # Log access to root endpoint
-    return {"message": "ChatVector AI Backend is Live!"} # Simple health check endpoint
+    return {"message": "ChatVector AI Backend is Live!"} 
 
-app.include_router(test_router)  # Add this line with the others
+app.include_router(test_router) 
 app.include_router(upload_router)
 app.include_router(chat_router)
 
