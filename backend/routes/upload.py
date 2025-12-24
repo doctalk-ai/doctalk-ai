@@ -22,14 +22,14 @@ async def upload(file: UploadFile = File(...)):
             reader = PdfReader(io.BytesIO(contents))
             for page in reader.pages: 
                 file_text += page.extract_text() + "\n"
-                logging.info(f" Extracted {len(file_text)} characters of text")
+                logger.info(f" Extracted {len(file_text)} characters of text")
         elif file.content_type == "text/plain":
             # Try UTF-8 first, if that fails, try Turkish Windows encoding
             try:
                 file_text = contents.decode("utf-8")
             except UnicodeDecodeError:
                 file_text = contents.decode("cp1254")  # Common for Turkish Windows files
-                logging.info(f" Extracted {len(file_text)} characters of text")
+                logger.info(f" Extracted {len(file_text)} characters of text")
         else:
             logger.error(f"Unsupported file type uploaded.{file.content_type}")
             return {"error": "Unsupported file type. Please upload a PDF or TXT file."}
