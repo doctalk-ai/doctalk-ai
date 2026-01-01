@@ -4,6 +4,10 @@ from backend.routes.upload import router as upload_router
 from backend.routes.chat import router as chat_router
 from backend.core.config import Settings
 from backend.core.logging_config import setup_logging
+from backend.mocking.conf_test import mock_settings  # Ensure env vars are set before app starts    
+from backend.mocking.test_embeddings import test_get_embedding_retry_failure  # Ensure tests are available 
+from backend.mocking.test_embeddings import test_get_embedding_success  # Ensure tests are available    
+
 import logging
 
 
