@@ -1,0 +1,20 @@
+{
+  "name": "vector-vs-hybrid-diverging-fixture",
+  "queries": [
+    {
+      "query": "invoice PDF export error code E4021",
+      "doc_ids": ["fixture-doc-11"],
+      "relevant_chunks": [["fixture-doc-11", 9]]
+    },
+    {
+      "query": "webhook retry backoff schedule",
+      "doc_ids": ["fixture-doc-12"],
+      "relevant_chunks": [["fixture-doc-12", 3]]
+    },
+    {
+      "query": "least privilege service account setup",
+      "doc_ids": ["fixture-doc-13"],
+      "relevant_chunks": [["fixture-doc-13", 6]]
+    }
+  ]
+}

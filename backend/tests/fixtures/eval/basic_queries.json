@@ -1,0 +1,60 @@
+{
+  "name": "basic-recall-fixture",
+  "queries": [
+    {
+      "query": "What is the refund policy for annual plans?",
+      "doc_ids": ["fixture-doc-01"],
+      "relevant_chunks": [["fixture-doc-01", 2]]
+    },
+    {
+      "query": "How do I reset my account password?",
+      "doc_ids": ["fixture-doc-01"],
+      "relevant_chunks": [["fixture-doc-01", 5]]
+    },
+    {
+      "query": "What data is included in the nightly export?",
+      "doc_ids": ["fixture-doc-02"],
+      "relevant_chunks": [["fixture-doc-02", 1]]
+    },
+    {
+      "query": "Which regions does the service run in?",
+      "doc_ids": ["fixture-doc-02"],
+      "relevant_chunks": [["fixture-doc-02", 4]]
+    },
+    {
+      "query": "What is the maximum file size for uploads?",
+      "doc_ids": ["fixture-doc-03"],
+      "relevant_chunks": [["fixture-doc-03", 0]]
+    },
+    {
+      "query": "How is API rate limiting enforced?",
+      "doc_ids": ["fixture-doc-03"],
+      "relevant_chunks": [["fixture-doc-03", 3]]
+    },
+    {
+      "query": "What encryption is used for data at rest?",
+      "doc_ids": ["fixture-doc-04"],
+      "relevant_chunks": [["fixture-doc-04", 1]]
+    },
+    {
+      "query": "How long are audit logs retained?",
+      "doc_ids": ["fixture-doc-04"],
+      "relevant_chunks": [["fixture-doc-04", 6]]
+    },
+    {
+      "query": "What SSO providers are supported?",
+      "doc_ids": ["fixture-doc-05"],
+      "relevant_chunks": [["fixture-doc-05", 2]]
+    },
+    {
+      "query": "How do I cancel a subscription?",
+      "doc_ids": ["fixture-doc-05"],
+      "relevant_chunks": [["fixture-doc-05", 4]]
+    },
+    {
+      "query": "What happens to data after account deletion?",
+      "doc_ids": ["fixture-doc-01", "fixture-doc-04"],
+      "relevant_chunks": [["fixture-doc-01", 7], ["fixture-doc-04", 3]]
+    }
+  ]
+}
